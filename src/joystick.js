@@ -16,6 +16,7 @@ export class Joystick extends React.Component {
     this.handleStart = this.handleStart.bind(this);
     this.handleMove = this.handleMove.bind(this);
     this.handleEnd = this.handleEnd.bind(this);
+    this.onJoystickMovement = props.onJoystickMovement;
   }
 
   componentDidMount() {
@@ -73,7 +74,7 @@ export class Joystick extends React.Component {
       let posX = Math.cos(angle) * normalizedDistance;
       let posY = Math.sin(angle) * normalizedDistance;
 
-      this.setState({
+      let newState = {
           moving: this.state.moving,
           startX: this.state.startX,
           startY: this.state.startY,
@@ -81,9 +82,12 @@ export class Joystick extends React.Component {
           angle: angle,
           posX: posX,
           posY: posY
-        }
-      );
+        };
+      this.setState(newState);
 
+      if (this.onJoystickMovement) {
+        this.onJoystickMovement(newState);
+      }
     }
   }
 
@@ -93,15 +97,17 @@ export class Joystick extends React.Component {
 
       evt.preventDefault();
     }
-
-    this.setState({
-        moving: false,
-        posX:0,
-        posY:0,
-        distance:0,
-        angle:0
-      }
-    );
+    let newState = {
+      moving: false,
+      posX:0,
+      posY:0,
+      distance:0,
+      angle:0
+    };
+    this.setState(newState);
+    if (this.onJoystickMovement) {
+      this.onJoystickMovement(newState);
+    }
   }
 
   render() {
